@@ -5,14 +5,14 @@ import { Person } from '../../types';
 import { Sex } from '../../types/Sex';
 
 type Props = {
-  person?: Person;
+  person: Person;
 };
 
 export const ParentLink: React.FC<Props> = ({ person }) => {
   return (
     <Link
       to={`/people/${person?.slug}`}
-      className={cn({ 'has-text-danger': person?.sex === Sex.Female })}
+      className={cn({ 'has-text-danger': person.sex === Sex.Female })}
     >
       {person?.name}
     </Link>
