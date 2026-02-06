@@ -1,45 +1,44 @@
-import cn from 'classnames';
 import React from 'react';
 import { Person } from '../../types';
-import { Link } from 'react-router-dom';
 import { PersonLink } from './PersonLink';
+import { useParams } from 'react-router-dom';
 
 type Props = {
-  person: Person;
-  currentPerson?: { slug: string };
-  mother?: Person;
-  father?: Person;
+  people: Person[];
 };
 
-export const PeopleTable: React.FC<Props> = ({
-  person,
-  currentPerson,
-  mother,
-  father,
-}) => {
-  const { name, born, died, sex, motherName, fatherName, slug } = person;
+export const PeopleTable: React.FC<Props> = ({ people }) => {
+  const { personSlug } = useParams();
+
+  const currentPerson = people.find(person => person.slug === personSlug);
 
   return (
-    <tr
-      data-cy="person"
-      className={cn({
-        'has-background-warning': slug === currentPerson?.slug,
-      })}
+    <table
+      data-cy="peopleTable"
+      className="table is-striped is-hoverable is-narrow is-fullwidth"
     >
-      <td>
-        <Link
-          to={`/people/${slug}`}
-          className={cn({ 'has-text-danger': sex === 'f' })}
-        >
-          {name}
-        </Link>
-      </td>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Sex</th>
+          <th>Born</th>
+          <th>Died</th>
+          <th>Mother</th>
+          <th>Father</th>
+        </tr>
+      </thead>
 
-      <td>{sex}</td>
-      <td>{born}</td>
-      <td>{died}</td>
-      <td>{(mother && <PersonLink person={mother} />) || motherName || '-'}</td>
-      <td>{(father && <PersonLink person={father} />) || fatherName || '-'}</td>
-    </tr>
+      <tbody>
+        {people.map(person => (
+          <PersonLink
+            person={person}
+            key={person.slug}
+            currentPerson={currentPerson}
+            mother={people.find(parent => parent.name === person.motherName)}
+            father={people.find(parent => parent.name === person.fatherName)}
+          />
+        ))}
+      </tbody>
+    </table>
   );
 };
